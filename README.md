@@ -12,7 +12,7 @@ Senior Data Engineer, CJ MORE
 
 ใน Workshop วันนี้เราจะครอบคลุมหัวข้อต่าง ๆ ดังนี้:
 
-### Gemini Code Assist Workshops
+### Data Quality Assurance in Apache Airflow
 1. [Setup Google Cloud Environment](documents/01_set_up_gemini_code_assist.md)
 2. [Set up local Airflow environment](documents/02_set_up_airflow_env.md)
 
