@@ -8,14 +8,11 @@
 
 [1.4 Create BigQuery Dataset]() 
 
-[1.5. Clone data from public Dataset : TheLook e-commerce]()
-
-
 ### วิธีการสร้าง GCP Project ผ่าน Google Cloud Console
 
 1. **ไปที่หน้า Google Cloud Console**
 2. **กรอกข้อมูลโปรเจคใหม่:**
-    - **Project Name**: ใส่ชื่อโปรเจคใหม่ที่ต้องการ (เช่น `Beat Gemini Code Assist`)
+    - **Project Name**: ใส่ชื่อโปรเจคใหม่ที่ต้องการ (เช่น `DQA Beat Project`)
     - **Project ID**: กำหนด `project_id` (หรือใช้ค่าที่แนะนำโดย Google)
     - **Billing Account**: เลือกบัญชี Billing ที่ต้องการเชื่อมต่อ (หากยังไม่มี ให้สร้าง Billing Account ใหม่)
 3. **คลิก `Create`** เพื่อสร้างโปรเจคใหม่
@@ -33,16 +30,16 @@ gcloud services enable cloudshell.googleapis.com
 ประกาศตัวแปรเพื่อการ Setup 
 
 - `[YOUR_PROJECT_ID]` ให้แก้เป็นชื่อ project ที่เราใช้ทำงาน
-- `[YOUR_NAME]` ให้แก้ไขชื่อ Bucket ที่จะสร้าง เป็นชื่อตัวเอง เช่น `deb-gemini-code-assist-beat`
+- `[YOUR_NAME]` ให้แก้ไขชื่อ Bucket ที่จะสร้าง เป็นชื่อตัวเอง เช่น `data-th-beat888`
 
 ```jsx
 export PROJECT_ID="[YOUR_PROJECT_ID]"
-export GCS_BUCKET_NAME="deb-gemini-code-assist-[YOUR_NAME]"
+export GCS_BUCKET_NAME="data-th-[YOUR_NAME]"
 ```
 
 ```jsx
-export SERVICE_ACCOUNT_NAME="sa-gemini-airflow"
-export BQ_DATASET_NAME="gemini_assist_workshop" 
+export SERVICE_ACCOUNT_NAME="sa-gcp-airflow"
+export BQ_DATASET_NAME="dqa_workshop" 
 
 echo $PROJECT_ID
 echo $GCS_BUCKET_NAME
@@ -67,7 +64,7 @@ gsutil ls
 ```bash
 gcloud iam service-accounts create $SERVICE_ACCOUNT_NAME \
     --description="The service account used for Airflow to access GCP" \
-    --display-name="SA_GEMINI_AIRFLOW_CODE_ASSIST"
+    --display-name="SA_TO_ACCESS_GCP_AIRFLOW"
 ```
 
 - ให้สิทธิ์กับ Service Account ในการเข้าถึง BigQuery และ GCS
@@ -106,26 +103,3 @@ bq --location=[location] mk -d [project_id]:[dataset_name]
 ```bash
 bq --location=asia-southeast1 mk -d $PROJECT_ID:$BQ_DATASET_NAME
 ```
-
-## 1.5. Clone data from public Dataset : TheLook e-commerce
-
-Enable BigQuery Transfer service. -  ต้องเปิดใช้งาน **BigQuery Data Transfer Service API** ในโปรเจคปลายทางก่อนใช้คำสั่งนี้:
-
-```bash
-gcloud services enable bigquerydatatransfer.googleapis.com 
-```
-
-หากต้องการ clone ทั้ง dataset `thelook_ecommerce` ไปยังโปรเจค  และเก็บใน dataset ของเรา ชื่อ `gemini_assist_workshop`:
-
-```bash
-
-bq mk --transfer_config \
-  --project_id=$PROJECT_ID \
-  --data_source=cross_region_copy \
-  --target_dataset=$BQ_DATASET_NAME \
-  --display_name="Clone thelook_ecommerce Dataset" \
-  --params='{"source_dataset_id":"thelook_ecommerce","source_project_id":"bigquery-public-data"}'
-
-```
-
-![](../assets/enable_bq_transfer_api.png)
