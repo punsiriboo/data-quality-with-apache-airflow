@@ -18,3 +18,10 @@ echo -e "AIRFLOW_UID=$(id -u)" > .env
 ```sh
 docker compose up
 ```
+
+#### Docker Commands
+- Build custom Airflow Image: `docker compose build`
+- Spin Up Docker Containers: `docker compose up -d`
+- Stop Docker Containers: docker `compose stop`
+- Start stopped Docker Containers: `docker compose start`
+- Destroy Docker Containers: `docker compose down --volumes --remove-orphans`

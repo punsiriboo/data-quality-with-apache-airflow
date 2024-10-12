@@ -88,6 +88,6 @@ data_context = BaseDataContext(project_config=data_context_config)
 ge_in_memory_context = GreatExpectationsOperator(
     task_id='ge_in_memory_context',
     run_id='ge_airflow_run',
-    data_context=data_context
+    data_context=data_context,
     dag=dag
 )

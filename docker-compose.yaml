@@ -62,7 +62,7 @@ x-airflow-common:
     # AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
     AIRFLOW__CORE__FERNET_KEY: ''
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
-    AIRFLOW__CORE__LOAD_EXAMPLES: 'true'
+    AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     AIRFLOW__CORE__DAGBAG_IMPORT_TIMEOUT: 300
     AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session'
     # yamllint disable rule:line-length
@@ -72,18 +72,18 @@ x-airflow-common:
     AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
     # WARNING: Use _PIP_ADDITIONAL_REQUIREMENTS option ONLY for a quick checks
     # for other purpose (development, test and especially production usage) build/extend Airflow image.
-    _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:- }
+    _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
     AIRFLOW_CONN_GOOGLE_CLOUD_DEFAULT: "google-cloud-platform://"
     GOOGLE_APPLICATION_CREDENTIALS: "/opt/airflow/cred/sa.json"
-    AIRFLOW_CONN_MY_EXAMPLE_RETAIL_DATABASE: "sqlite:////opt/airflow/config/example_retail.db"
+    AIRFLOW_CONN_MY_RETAIL_DATABASE: sqlite://data%2Fexample_retail.db
     AIRFLOW_ENV: "dev"
   volumes:
     - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
     - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
-    - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
     - ${AIRFLOW_PROJ_DIR:-.}/tests:/opt/airflow/tests
     - ${AIRFLOW_PROJ_DIR:-.}/cred:/opt/airflow/cred
+    - ${AIRFLOW_PROJ_DIR:-.}/data:/opt/airflow/data
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
@@ -200,7 +200,12 @@ services:
       _PIP_ADDITIONAL_REQUIREMENTS: ''
     user: "0:0"
     volumes:
-      - ${AIRFLOW_PROJ_DIR:-.}:/sources
+    - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
+    - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
+    - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
+    - ${AIRFLOW_PROJ_DIR:-.}/tests:/opt/airflow/tests
+    - ${AIRFLOW_PROJ_DIR:-.}/cred:/opt/airflow/cred
+    - ${AIRFLOW_PROJ_DIR:-.}/data:/opt/airflow/data
 
   airflow-cli:
     <<: *airflow-common
