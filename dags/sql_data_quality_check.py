@@ -1,7 +1,6 @@
 from airflow import DAG
 from airflow.providers.common.sql.operators.sql import SQLCheckOperator
-from airflow.providers.common.sql.operators.sql_column import SQLColumnCheckOperator
-from airflow.providers.common.sql.operators.sql_table import SQLTableCheckOperator
+from airflow.providers.common.sql.operators.sql import SQLColumnCheckOperator, SQLTableCheckOperator
 from airflow.utils.dates import days_ago
 
 # กำหนดค่าเริ่มต้นสำหรับ DAG
@@ -22,7 +21,7 @@ with DAG(
     check_data_exist = SQLCheckOperator(
         task_id='check_data_exist',
         sql="SELECT COUNT(*) FROM orders WHERE order_date > '2023-01-01'",
-        conn_id='my_sql_connection',  # ใส่ชื่อ connection ใน Airflow ที่เชื่อมต่อกับฐานข้อมูล
+        conn_id='my_retail_database',  # ใส่ชื่อ connection ใน Airflow ที่เชื่อมต่อกับฐานข้อมูล
     )
 
     # ตัวอย่าง SQLColumnCheckOperator - ตรวจสอบคอลัมน์ในตาราง
@@ -33,7 +32,7 @@ with DAG(
             'price': {'min': 0},  # ตรวจสอบว่าราคาไม่มีค่าติดลบ
             'quantity': {'max': 100},  # ตรวจสอบว่า quantity ไม่เกิน 100
         },
-        conn_id='my_sql_connection',
+        conn_id='my_retail_database',
     )
 
     # ตัวอย่าง SQLTableCheckOperator - ตรวจสอบระดับตาราง
@@ -44,7 +43,7 @@ with DAG(
             'row_count_check': {'check_statement': 'COUNT(*) > 1000'},  # ตรวจสอบว่ามีจำนวนแถวมากกว่า 1,000 แถว
             'unique_order_id_check': {'check_statement': 'COUNT(DISTINCT order_id) = COUNT(order_id)'},  # ตรวจสอบว่า `order_id` ไม่ซ้ำกัน
         },
-        conn_id='my_sql_connection',
+        conn_id='my_retail_database',
     )
 
     # กำหนดลำดับการทำงาน
