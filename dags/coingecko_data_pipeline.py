@@ -49,15 +49,15 @@ The DAG runs every Monday, Wednesday, and Friday at midnight.
 - The `write_disposition` can be changed to `WRITE_TRUNCATE` if you want to overwrite the table with new data.
 """
 
-# Define the DAG
 with DAG(
     'coingecko_api_to_bigquery',
     default_args=default_args,
     description='Collect data from CoinGecko API and load to BigQuery',
-    schedule_interval='0 0 * * 1,3,5',  # Run every Monday, Wednesday, and Friday at 00:00 (midnight)
+    schedule_interval='*/3 * * * *',  # Run every 3 minutes
     start_date=datetime(2023, 12, 18),
     catchup=False,
-    doc_md = __doc__
+    doc_md = __doc__,
+    sla=timedelta(minutes=1) # Set SLA to 1 minutes
 ) as dag:
 
     # Task 1: Collect data from CoinGecko API

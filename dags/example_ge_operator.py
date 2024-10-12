@@ -5,7 +5,7 @@ from airflow.operators.bash import BashOperator
 from airflow.providers.greatexpectations.operators.greatexpectations import GreatExpectationsOperator
 
 default_args = {
-    "owner": "Airflow",
+    "owner": "punsiri.boo",
     "start_date": airflow.utils.dates.days_ago(1)
 }
 
