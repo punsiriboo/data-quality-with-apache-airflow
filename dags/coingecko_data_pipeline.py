@@ -1,12 +1,20 @@
+import sys
+import requests
+import json
+from datetime import datetime, timedelta
+
 from airflow import DAG
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator
 from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
 from airflow.providers.google.cloud.hooks.gcs import GCSHook
-import requests
-import json
-from datetime import datetime, timedelta
-from commons.slack_client import send_success_notify, send_fail_notiy
+
+
+COMMONS_PATH ="/opt/airflow/include/"
+if not COMMONS_PATH in sys.path:
+    sys.path.insert(0, COMMONS_PATH)
+
+from commons.slack_client import send_success_notify
 
 # Define default arguments for the DAG
 default_args = {
@@ -15,7 +23,7 @@ default_args = {
     'retry_delay': timedelta(minutes=5),
     'sla': timedelta(minutes=1) # Set SLA to 1 minutes
 }
-# PROMPT: Write Document for this pipeline as a DagDoc 
+
 __doc__ = """
 This DAG collects cryptocurrency price data from the CoinGecko API and loads it into a BigQuery table.
 
@@ -57,10 +65,11 @@ with DAG(
     default_args=default_args,
     description='Collect data from CoinGecko API and load to BigQuery',
     schedule_interval='*/3 * * * *',  # Run every 3 minutes
-    start_date=datetime(2023, 12, 18),
+    start_date=datetime(2024, 10, 10),
     catchup=False,
     doc_md = __doc__,
     on_success_callback=send_success_notify,
+    sla_miss_callback=None,
 ) as dag:
 
     start = EmptyOperator(task_id="start")

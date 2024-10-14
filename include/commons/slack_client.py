@@ -5,7 +5,9 @@ from slack_sdk.webhook import WebhookClient
 slack_webhook_url = os.environ.get('SLACK_WEBHOOK_URL')
 webhook = WebhookClient(slack_webhook_url)
 
-def send_success_notify():
+def send_success_notify(context):
+    dag_id = context['task_instance'].dag_id
+    execution_date = context['execution_date']
     response = webhook.send(
         text="fallback",
         blocks=[
@@ -16,7 +18,7 @@ def send_success_notify():
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": "*Notification*: ✅ Dag Success"
+                    "text": f"*DAG ID:* {dag_id}\n*Notification*: ✅ Dag Success\n*Execution Date:* {execution_date}"
                 }
             },        
             {
@@ -25,7 +27,9 @@ def send_success_notify():
         ]
     )
 
-def send_fail_notiy():
+def send_fail_notiy(context):
+    dag_id = context['task_instance'].dag_id
+    execution_date = context['execution_date']
     response = webhook.send(
         text="fallback",
         blocks=[
@@ -36,7 +40,7 @@ def send_fail_notiy():
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": "*Notification*: ❌ Dag Validation Failed"
+                    "text": f"*DAG ID:* {dag_id}\n*Notification*: ❌ Dag Validation Failed\n*Execution Date:* {execution_date}"
                 }
             },        
             {

@@ -1,5 +1,6 @@
 {
-    "expectation_suite_name": "orders_validation_suite",
+    "data_asset_type": null,
+    "expectation_suite_name": "orders_columns_validation_suite",
     "expectations": [
       {
         "expectation_type": "expect_column_values_to_be_unique",
@@ -77,10 +78,11 @@
         "meta": {}
       },
       {
-        "expectation_type": "expect_column_values_to_be_greater_than_or_equal_to",
+        "expectation_type": "expect_column_values_to_be_between",
         "kwargs": {
           "column": "price",
-          "min_value": 0
+          "min_value": 0,
+          "max_value": 10000
         },
         "meta": {}
       },
@@ -100,10 +102,11 @@
         "meta": {}
       },
       {
-        "expectation_type": "expect_column_values_to_be_greater_than",
+        "expectation_type": "expect_column_values_to_be_between",
         "kwargs": {
           "column": "quantity",
-          "min_value": 0
+          "min_value": 0,
+          "max_value": 10000
         },
         "meta": {}
       },
@@ -111,6 +114,14 @@
         "expectation_type": "expect_column_values_to_not_be_null",
         "kwargs": {
           "column": "quantity"
+        },
+        "meta": {}
+      },
+      {
+        "expectation_type": "expect_column_distinct_values_to_be_in_set",
+        "kwargs": {
+          "column": "quantity",
+          "value_set": ["Laptop", "Headphones", "Smartphone", "Monitor", "Keyboard", "Mouse", "Tablet", "Smartwatch", "Camera"]
         },
         "meta": {}
       }
