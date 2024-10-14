@@ -6,6 +6,7 @@ from airflow.providers.google.cloud.hooks.gcs import GCSHook
 import requests
 import json
 from datetime import datetime, timedelta
+from commons.slack_client import send_success_notify, send_fail_notiy
 
 # Define default arguments for the DAG
 default_args = {
@@ -59,6 +60,7 @@ with DAG(
     start_date=datetime(2023, 12, 18),
     catchup=False,
     doc_md = __doc__,
+    on_success_callback=send_success_notify,
 ) as dag:
 
     start = EmptyOperator(task_id="start")

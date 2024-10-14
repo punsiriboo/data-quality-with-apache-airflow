@@ -1,0 +1,122 @@
+{
+    "expectation_suite_name": "orders_validation_suite",
+    "expectations": [
+      {
+        "expectation_type": "expect_column_values_to_be_unique",
+        "kwargs": {
+          "column": "order_id"
+        },
+        "meta": {}
+      },
+      {
+        "expectation_type": "expect_column_values_to_not_be_null",
+        "kwargs": {
+          "column": "order_id"
+        },
+        "meta": {}
+      },
+      {
+        "expectation_type": "expect_column_values_to_be_of_type",
+        "kwargs": {
+          "column": "order_date",
+          "type_": "str"
+        },
+        "meta": {}
+      },
+      {
+        "expectation_type": "expect_column_values_to_match_regex",
+        "kwargs": {
+          "column": "order_date",
+          "regex": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "meta": {}
+      },
+      {
+        "expectation_type": "expect_column_values_to_not_be_null",
+        "kwargs": {
+          "column": "order_date"
+        },
+        "meta": {}
+      },
+      {
+        "expectation_type": "expect_column_values_to_be_of_type",
+        "kwargs": {
+          "column": "customer_name",
+          "type_": "str"
+        },
+        "meta": {}
+      },
+      {
+        "expectation_type": "expect_column_values_to_not_be_null",
+        "kwargs": {
+          "column": "customer_name"
+        },
+        "meta": {}
+      },
+      {
+        "expectation_type": "expect_column_values_to_be_of_type",
+        "kwargs": {
+          "column": "product_name",
+          "type_": "str"
+        },
+        "meta": {}
+      },
+      {
+        "expectation_type": "expect_column_values_to_not_be_null",
+        "kwargs": {
+          "column": "product_name"
+        },
+        "meta": {}
+      },
+      {
+        "expectation_type": "expect_column_values_to_be_of_type",
+        "kwargs": {
+          "column": "price",
+          "type_": "float"
+        },
+        "meta": {}
+      },
+      {
+        "expectation_type": "expect_column_values_to_be_greater_than_or_equal_to",
+        "kwargs": {
+          "column": "price",
+          "min_value": 0
+        },
+        "meta": {}
+      },
+      {
+        "expectation_type": "expect_column_values_to_not_be_null",
+        "kwargs": {
+          "column": "price"
+        },
+        "meta": {}
+      },
+      {
+        "expectation_type": "expect_column_values_to_be_of_type",
+        "kwargs": {
+          "column": "quantity",
+          "type_": "int"
+        },
+        "meta": {}
+      },
+      {
+        "expectation_type": "expect_column_values_to_be_greater_than",
+        "kwargs": {
+          "column": "quantity",
+          "min_value": 0
+        },
+        "meta": {}
+      },
+      {
+        "expectation_type": "expect_column_values_to_not_be_null",
+        "kwargs": {
+          "column": "quantity"
+        },
+        "meta": {}
+      }
+    ],
+    "ge_cloud_id": null,
+    "meta": {
+        "great_expectations_version": "0.15.34"
+    }
+}
