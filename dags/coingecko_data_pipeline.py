@@ -1,4 +1,5 @@
 from airflow import DAG
+from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator
 from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
 from airflow.providers.google.cloud.hooks.gcs import GCSHook
@@ -11,6 +12,7 @@ default_args = {
     'owner': 'gemini-code-assist',
     'retries': 2,
     'retry_delay': timedelta(minutes=5),
+    'sla': timedelta(minutes=1) # Set SLA to 1 minutes
 }
 # PROMPT: Write Document for this pipeline as a DagDoc 
 __doc__ = """
@@ -57,8 +59,10 @@ with DAG(
     start_date=datetime(2023, 12, 18),
     catchup=False,
     doc_md = __doc__,
-    sla=timedelta(minutes=1) # Set SLA to 1 minutes
 ) as dag:
+
+    start = EmptyOperator(task_id="start")
+    end = EmptyOperator(task_id="end")
 
     # Task 1: Collect data from CoinGecko API
     def collect_coingecko_data(**kwargs):
@@ -93,6 +97,7 @@ with DAG(
         task_id='collect_coingecko_data',
         python_callable=collect_coingecko_data,
         op_kwargs={'bucket_name': 'deb-gemini-code-assist-beat-99'},  # Replace with your bucket name
+        sla=timedelta(seconds=10) # Set SLA to 10 seconds
     )
 
     # Task 2: Load data from GCS to BigQuery
@@ -107,4 +112,7 @@ with DAG(
     )
 
     # Set task dependencies
-    collect_data_task >> load_to_bq_task
+    start >> \
+    collect_data_task >> \
+    load_to_bq_task >> \
+    end

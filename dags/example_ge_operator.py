@@ -1,93 +1,35 @@
-import airflow
-from airflow import AirflowException
+from pendulum import datetime
 from airflow import DAG
-from airflow.operators.bash import BashOperator
-from airflow.providers.greatexpectations.operators.greatexpectations import GreatExpectationsOperator
-
-default_args = {
-    "owner": "punsiri.boo",
-    "start_date": airflow.utils.dates.days_ago(1)
-}
-
-dag = DAG(
-    dag_id='ge_dag',
-    default_args=default_args
+from airflow.operators.empty import EmptyOperator
+from great_expectations_provider.operators.great_expectations import (
+    GreatExpectationsOperator,
 )
 
-ge_checkpoint_fail = GreatExpectationsOperator(
-    task_id='ge_checkpoint_fail',
-    run_id='ge_airflow_run',
-    checkpoint_name='taxi.fail.chk',
-    dag=dag
-)
+MY_CONN_ID = "my_retail_database"
+MY_DB_SCHEMA = "orders"
+MY_GX_DATA_CONTEXT = "include/gx"
 
-ge_checkpoint_pass = GreatExpectationsOperator(
-    task_id='ge_checkpoint_pass',
-    run_id='ge_airflow_run',
-    checkpoint_name='taxi.pass.chk',
-    dag=dag
-)
+# Define the DAG
+with DAG(
+    dag_id="gx_tutorial_dag",
+    start_date=datetime(2023, 7, 1),
+    schedule_interval=None,  # You can change this if you want to set a schedule
+    catchup=False,
+) as dag:
+    
+    start = EmptyOperator(task_id="start")
+    end = EmptyOperator(task_id="end")
 
-ge_batch_kwargs_pass = GreatExpectationsOperator(
-    task_id='ge_batch_kwargs_pass',
-    expectation_suite_name='taxi.demo',
-    batch_kwargs={
-        'path': '/Users/sam/code/ge_demo/data/yellow_tripdata_sample_2019-01.csv',
-        'datasource': 'data__dir'
-    },
-    dag=dag
-)
+    # Task: Validate the data using Great Expectations
+    validate_orders = GreatExpectationsOperator(
+        task_id="validate_orders",
+        conn_id=MY_CONN_ID,
+        data_context_root_dir=MY_GX_DATA_CONTEXT,
+        data_asset_name="orders",  # Your data asset name
+        expectation_suite_name="orders_suite",  # Your expectation suite name
+        return_json_dict=True,  # Returns validation results as a dictionary
+    )
 
-ge_batch_kwargs_list_pass = GreatExpectationsOperator(
-    task_id='ge_batch_kwargs_list_pass',
-    assets_to_validate=[
-        {
-            'batch_kwargs': {
-                'path': '/Users/sam/code/ge_demo/data/yellow_tripdata_sample_2019-01.csv',
-                'datasource': 'data__dir'
-            },
-            'expectation_suite_name': 'taxi.demo'
-        }
-    ],
-    dag=dag
-)
-
-ge_checkpoint_pass_root_dir = GreatExpectationsOperator(
-    task_id='ge_checkpoint_pass_root_dir',
-    run_id='ge_airflow_run',
-    checkpoint_name='taxi.pass.chk',
-    data_context_root_dir='/Users/sam/code/ge_demo/great_expectations',
-    dag=dag
-)
-
-ge_wrong_root_dir = GreatExpectationsOperator(
-    task_id='ge_wrong_root_dir',
-    run_id='ge_airflow_run',
-    checkpoint_name='taxi.pass.chk',
-    data_context_root_dir='/Users/sam/code/',
-    dag=dag
-)
-
-ge_too_many_args = GreatExpectationsOperator(
-    task_id='ge_too_many_args',
-    run_id='ge_airflow_run',
-    checkpoint_name='taxi.pass.chk',
-    batch_kwargs={},
-    expectation_suite_name='my_suite',
-    dag=dag
-)
-
-# Create an operator using an in-memory data context from a dictionary
-data_context_config = DataContextConfig(
-  {
-    # the mega dictionary 
-  }
-)
-data_context = BaseDataContext(project_config=data_context_config)
-
-ge_in_memory_context = GreatExpectationsOperator(
-    task_id='ge_in_memory_context',
-    run_id='ge_airflow_run',
-    data_context=data_context,
-    dag=dag
-)
+    # กำหนดลำดับการทำงาน
+    start >> validate_orders >> end
+        

@@ -6,7 +6,6 @@
 __pycache__/
 *.py[cod]
 *$py.class
-*/sa.json
 
 # C extensions
 *.so
@@ -185,12 +184,8 @@ pyrightconfig.json
 # Airflow
 logs/
 
-# Spark
-spark-events/
+# workshop keyfiles
+*/sa.json
 
-# DEB Workshop
-de-lifecycle
-data/
-
-# DEB dataengineercafe keyfiles
-dataengineercafe-*.json
+# great expectation 
+.ge_store_backend_id
