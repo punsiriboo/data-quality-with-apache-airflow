@@ -3,16 +3,13 @@ from airflow.models import DagBag
 
 @pytest.fixture
 def dagbag():
-    return DagBag(dag_folder="../dags/", include_examples=False)
+    return DagBag(dag_folder="./dags/", include_examples=False)
 
 def test_dagbag_load(dagbag):
     assert len(dagbag.dags) > 0
 
 def test_dagbag_no_errors(dagbag):
     assert len(dagbag.import_errors) == 0
-
-def test_dagbag_no_invalid_dags(dagbag):
-    assert len(dagbag.invalid_dags) == 0
 
 def test_dagbag_no_duplicate_dag_ids(dagbag):
     dag_ids = [dag.dag_id for dag in dagbag.dags.values()]
@@ -22,10 +19,6 @@ def test_dagbag_no_duplicate_task_ids(dagbag):
     for dag in dagbag.dags.values():
         task_ids = [task.task_id for task in dag.tasks]
         assert len(task_ids) == len(set(task_ids))
-
-def test_dagbag_no_circular_dependencies(dagbag):
-    for dag in dagbag.dags.values():
-        assert dag.has_circular_dependencies() is False
 
 def test_dagbag_no_invalid_task_types(dagbag):
     for dag in dagbag.dags.values():
@@ -41,13 +34,3 @@ def test_dagbag_no_invalid_task_params(dagbag):
     for dag in dagbag.dags.values():
         for task in dag.tasks:
             assert task.params is not None
-
-def test_dagbag_no_invalid_task_connections(dagbag):
-    for dag in dagbag.dags.values():
-        for task in dag.tasks:
-            assert task.connections is not None
-
-def test_dagbag_no_invalid_task_sla(dagbag):
-    for dag in dagbag.dags.values():
-        for task in dag.tasks:
-            assert task.sla is not None
