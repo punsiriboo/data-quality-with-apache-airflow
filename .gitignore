@@ -192,3 +192,6 @@ logs/
 
 # Visual Studio Code
 .vscode
+
+# database sqlite
+*.db
