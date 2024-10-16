@@ -23,7 +23,6 @@ data-quality-with-apache-airflow/
 ├── README.md
 └── assets/
 └── dags/
-└── runable_dags/
 └── documents/
 └── prompts/
 └── cred/
@@ -35,7 +34,6 @@ data-quality-with-apache-airflow/
 | - | - |
 | `assets/` | โฟลเดอร์ที่เก็บ assets เช่นรูปภาพต่างๆ หรือ diagram
 | `dags/` | โฟลเดอร์ที่เก็บโค้ด DAG หรือ Airflow Data Pipelines ที่เราสร้างจะใช้ใน workshop |
-| `runable_dags/` | โฟลเดอร์ที่เก็บโค้ด DAG หรือ Airflow Data Pipelines ที่เป็นเฉลยของ workshop ใช้งานได้  |
 | `docker-compose.yaml` | ไฟล์ Docker Compose ที่ใช้รัน Airflow ขึ้นมาบนเครื่อง |
 | `prompts/`| โฟลเดอร์ที่เก็บ prompts ที่ใช้ในการ Generate Code หรือ Query
 | `cred/` | โฟลเดอร์ที่เก็บไฟล์ Credential หรือ Configuration อย่างไฟล์ `sa.json` |
