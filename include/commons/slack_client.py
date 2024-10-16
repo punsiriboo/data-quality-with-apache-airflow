@@ -27,8 +27,9 @@ def send_success_notify(context):
         ]
     )
 
-def send_fail_notiy(context):
+def send_failed_notiy(context):
     dag_id = context['task_instance'].dag_id
+    task_id = context['task_instance'].task_id
     execution_date = context['execution_date']
     response = webhook.send(
         text="fallback",
@@ -40,7 +41,10 @@ def send_fail_notiy(context):
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": f"*DAG ID:* {dag_id}\n*Notification*: ❌ Dag Validation Failed\n*Execution Date:* {execution_date}"
+                    "text": f"""*DAG ID:* {dag_id}\n
+                        *Task ID:* {task_id}\n
+                        *Notification*: ❌ Dag Validation Failed
+                        \n*Execution Date:* {execution_date}"""
                 }
             },        
             {

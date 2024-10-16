@@ -1,3 +1,4 @@
+import sys
 import airflow
 from airflow import DAG
 from airflow.operators.empty import EmptyOperator
@@ -10,6 +11,12 @@ from airflow.providers.common.sql.operators.sql import (
     SQLIntervalCheckOperator
 ) 
 from airflow.utils.dates import days_ago
+
+COMMONS_PATH ="/opt/airflow/include/"
+if not COMMONS_PATH in sys.path:
+    sys.path.insert(0, COMMONS_PATH)
+
+from commons.slack_client import send_success_notify, send_failed_notiy
 
 # กำหนดค่าเริ่มต้นสำหรับ DAG
 default_args = {
@@ -27,6 +34,8 @@ with DAG(
     schedule_interval='@daily',
     catchup=False,
     tags=['common-sql-provider'],
+    on_failure_callback=send_failed_notiy,
+    on_success_callback=send_success_notify
 ) as dag:
 
     start = EmptyOperator(task_id="start")
