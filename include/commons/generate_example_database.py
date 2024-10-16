@@ -1,6 +1,8 @@
 import sqlite3
 from faker import Faker
 import random
+from datetime import datetime, timedelta
+
 
 SQL_LITE_DB = 'data/example_retail.db'
 
@@ -36,7 +38,7 @@ def create_order_table():
     insert_stmt = "INSERT INTO orders (order_id, order_date, channel, customer_name, product_name, price, quantity, status)"
     for i in range(100):  # Generate 10 records
         order_id = i + 1
-        order_date = fake.date_this_year().strftime('%Y-%m-%d')
+        order_date = fake.date_this_month().strftime('%Y-%m-%d')
         channel = random.choice(channel_choice)
         customer_name = fake.first_name()
         product_name = random.choice(product_choice)
@@ -55,22 +57,28 @@ def create_order_table():
         print(stmt)
         cursor.execute(stmt)
 
+    # Get today's date
+    today = datetime.today()
+
+    # Get yesterday's date
+    yesterday = today - timedelta(days=1)
+
     cursor.execute(f"""
     -- เพิ่มตัวอย่างข้อมูลซ้ำกัน (เพื่อใช้ทดสอบ unique_order_id_check)
     {insert_stmt} VALUES
-    (101, '2023-02-15', 'Website', 'Bob', 'Headphones', 30.0, 2, 'Complete');
+    (101, '{yesterday.strftime('%Y-%m-%d')}', 'Website', 'Bob', 'Headphones', 30.0, 2, 'Complete');
     """)
                 
     cursor.execute(f"""
     -- เพิ่มข้อมูลที่ไม่ตรงกับเงื่อนไขสำหรับทดสอบ column_checks (price ติดลบ)
     {insert_stmt} VALUES
-    (102, '2023-02-15', 'Website', 'Test User', 'Test Product', -5.0, 1, 'Cancelled');
+    (102,  '{today.strftime('%Y-%m-%d')}', 'Website', 'Test User', 'Test Product', -5.0, 1, 'Cancelled');
     """)
 
     cursor.execute(f"""
     -- เพิ่มข้อมูลที่ไม่ตรงกับเงื่อนไขสำหรับทดสอบ quantity (quantity มากกว่า 100)
     {insert_stmt} VALUES
-    (103, '2023-03-01', 'Website', 'Test User 2', 'Test Product 2', 10.0, 150, 'Complete');         
+    (103,  '{today.strftime('%Y-%m-%d')}', 'Website', 'Test User 2', 'Test Product 2', 10.0, 150, 'Complete');         
     """)
 
     # บันทึกการเปลี่ยนแปลง

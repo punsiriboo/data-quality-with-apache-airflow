@@ -1,8 +1,14 @@
 import airflow
 from airflow import DAG
 from airflow.operators.empty import EmptyOperator
-from airflow.providers.common.sql.operators.sql import SQLCheckOperator
-from airflow.providers.common.sql.operators.sql import SQLColumnCheckOperator, SQLTableCheckOperator
+from airflow.providers.common.sql.operators.sql import (
+    SQLCheckOperator, 
+    SQLColumnCheckOperator, 
+    SQLValueCheckOperator,
+    SQLTableCheckOperator,
+    SQLThresholdCheckOperator,
+    SQLIntervalCheckOperator
+) 
 from airflow.utils.dates import days_ago
 
 # กำหนดค่าเริ่มต้นสำหรับ DAG
@@ -60,8 +66,7 @@ with DAG(
             },
             'price': {
                 "null_check": {"equal_to": 0},
-                # TODO: แก้เพื่อตรวจสอบว่าราคาไม่มีค่าติดลบ
-                "min": {"greater_than": -10}
+                "min": {"greater_than": 0}
             },  
             'quantity': {
                 "min": {"greater_than": 0}, 
@@ -90,9 +95,45 @@ with DAG(
             'row_count_check': {'check_statement': 'COUNT(*) > 10'},  # ตรวจสอบว่ามีจำนวนแถวมากกว่า 1,000 แถว
             'unique_order_id_check': {'check_statement': 'COUNT(DISTINCT order_id) = COUNT(order_id)'},  # ตรวจสอบว่า `order_id` ไม่ซ้ำกัน
         },
+        partition_clause="status = 'Complete'",
         conn_id=MY_CONN_ID,
     )
 
+    value_check = SQLValueCheckOperator(
+        task_id="check_row_count",
+        sql=f"SELECT COUNT(*) FROM orders;",
+        pass_value=200, #คาดหวังว่าจะมี จำนวน record ต้องเท่ากับ 200
+        conn_id=MY_CONN_ID,
+    )
+
+    # ตัวอย่าง SQLValueCheckOperator - ตรวจสอบ value ระดับ column ระบุขอบเขตของค่า
+    threshold_check = SQLThresholdCheckOperator(
+        task_id="check_threshold",
+        sql=f"SELECT AVG(quantity) FROM orders;",
+        min_threshold=1,# ค่าเฉลี่ยนของจำนวนชิ้นของการสั้งซื้อไม่ควรต่ำกว่า 1 ชิ้น
+        max_threshold=5, # ค่าเฉลี่ยนของจำนวนชิ้นของการสั้งซื้อไม่ควรเกิน 5 ชิ้น
+        conn_id=MY_CONN_ID, #'my_retail_database' คือ Connection ID ของฐานข้อมูลที่ใช้ในการเชื่อมต่อ
+    )
+
+    # ตัวอย่าง SQLIntervalCheckOperator - ค่าเทียบกับช่วงเวลาก่อนหน้า
+    interval_check = SQLIntervalCheckOperator(
+        task_id="check_interval_data",
+        table="orders",
+        days_back=-1,
+        date_filter_column="order_date",
+        metrics_thresholds={"AVG(quantity)": 1.5},
+        conn_id=MY_CONN_ID, #'my_retail_database' คือ Connection ID ของฐานข้อมูลที่ใช้ในการเชื่อมต่อ
+    )
+
     # กำหนดลำดับการทำงาน
-    start >> check_data_exist >> column_checks >> table_checks >> end
+    start >> \
+        [
+            check_data_exist,
+            column_checks,
+            table_checks,
+            value_check,
+            threshold_check,
+            interval_check,
+        ] >> \
+    end
 
