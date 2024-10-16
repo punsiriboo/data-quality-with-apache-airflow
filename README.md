@@ -28,6 +28,7 @@ data-quality-with-apache-airflow/
 └── prompts/
 └── cred/
 └── tests/
+└── include/
 ```
 
 | Name | Description |
@@ -39,3 +40,4 @@ data-quality-with-apache-airflow/
 | `prompts/`| โฟลเดอร์ที่เก็บ prompts ที่ใช้ในการ Generate Code หรือ Query
 | `cred/` | โฟลเดอร์ที่เก็บไฟล์ Credential หรือ Configuration อย่างไฟล์ `sa.json` |
 | `tests/` | โฟลเดอร์ที่เก็บไฟล์ unitest เพื่อทำการทดสอบ python code |
+| `include/` | โฟลเดอร์ที่เก็บ commons หรือ external integrate กับ open-source อื่นเช่น greate expactation |

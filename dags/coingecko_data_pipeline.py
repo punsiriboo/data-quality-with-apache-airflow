@@ -3,11 +3,15 @@ import requests
 import json
 from datetime import datetime, timedelta
 
+import pandas as pd
 from airflow import DAG
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator
 from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
 from airflow.providers.google.cloud.hooks.gcs import GCSHook
+from great_expectations_provider.operators.great_expectations import (
+    GreatExpectationsOperator,
+)
 
 
 COMMONS_PATH ="/opt/airflow/include/"
@@ -74,6 +78,7 @@ with DAG(
 
     start = EmptyOperator(task_id="start")
     end = EmptyOperator(task_id="end")
+    bucket_name = "deb-gemini-code-assist-beat-99"
 
     # Task 1: Collect data from CoinGecko API
     def collect_coingecko_data(**kwargs):
@@ -110,6 +115,15 @@ with DAG(
         op_kwargs={'bucket_name': 'deb-gemini-code-assist-beat-99'},  # Replace with your bucket name
         sla=timedelta(seconds=10) # Set SLA to 10 seconds
     )
+
+    # gx_validate_pg = GreatExpectationsOperator(
+    #     task_id="gx_validate_pg",
+    #     data_context_root_dir="include/gx",
+    #     dataframe_to_validate=pd.read_json(f'gs://{bucket_name}/raw/coingecko/coingecko_data_{datetime.now().strftime("%Y%m%d_%H%M%S")}.json',),
+    #     execution_engine="PandasExecutionEngine",
+    #     expectation_suite_name="strawberry_suite",
+    #     return_json_dict=True,
+    # )
 
     # Task 2: Load data from GCS to BigQuery
     load_to_bq_task = GCSToBigQueryOperator(

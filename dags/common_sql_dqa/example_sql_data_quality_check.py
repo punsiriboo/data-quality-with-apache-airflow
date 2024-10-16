@@ -13,13 +13,14 @@ default_args = {
 
 MY_CONN_ID = 'my_retail_database'
 
-# สร้าง DAG ชื่อ `sql_data_quality_check`
+# สร้าง DAG ชื่อ `example_sql_data_quality_check`
 with DAG(
     dag_id='example_sql_data_quality_check',
     default_args=default_args,
     start_date=days_ago(1),
     schedule_interval='@daily',
     catchup=False,
+    tags=['common-sql-provider'],
 ) as dag:
 
     start = EmptyOperator(task_id="start")
