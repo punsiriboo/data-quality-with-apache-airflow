@@ -120,7 +120,7 @@
       {
         "expectation_type": "expect_column_distinct_values_to_be_in_set",
         "kwargs": {
-          "column": "quantity",
+          "column": "product_name",
           "value_set": ["Laptop", "Headphones", "Smartphone", "Monitor", "Keyboard", "Mouse", "Tablet", "Smartwatch", "Camera"]
         },
         "meta": {}

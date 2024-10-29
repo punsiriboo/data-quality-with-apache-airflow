@@ -1,6 +1,6 @@
 from airflow import DAG
 from airflow.providers.sqlite.operators.sqlite import SqliteOperator
-from airflow.providers.google.cloud.transfers.bigquery_check_operator import BigQueryColumnCheckOperator
+from airflow.providers.google.cloud.transfers.bigquery import BigQueryColumnCheckOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 from airflow.operators.python import PythonOperator
 from airflow.operators.empty import EmptyOperator
