@@ -65,6 +65,7 @@ with DAG(
         ti = kwargs['ti']
         cnt_order_transform = ti.xcom_pull(key='cnt_order_transform')
         print(cnt_order_transform)
+        assert cnt_order_transform == 100 , "Check number of rows count"
 
     # Task 3: Load data into a temporary BigQuery table
     load_to_temp_table = BigQueryInsertJobOperator(
