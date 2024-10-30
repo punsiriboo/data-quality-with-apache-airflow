@@ -11,8 +11,7 @@ from include.commons.slack_client import send_success_notify, send_failed_notiy
 
 # Replace with your project ID and BigQuery details
 MY_CONN_ID = "my_retail_database"
-PROJECT_ID = 'your-project-id'
-DATASET_ID = 'your_dataset_id'
+DATASET_ID = 'sample_retail_dataset'
 TABLE_ID = 'orders'
 
 

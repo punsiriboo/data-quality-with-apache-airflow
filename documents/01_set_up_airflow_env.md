@@ -1,9 +1,8 @@
-# [Skooldio DEB] Gemini Code Assist for Data Engineering
+# Gemini Code Assist for Data Engineering
 
 
 ## 2.Preparing the Airflow DAG Development Environment
-ใน Bootcamp โปรเจคนี้ เราจะสร้าง Data Pipeline ในโฟลเดอร์ 00-bootcamp-project ดังนั้นให้เราคัดลอกไฟล์ docker-compose-with-spark.yml จากโฟลเดอร์ 04-automated-data-pipelines มาสร้างเป็นไฟล์ชื่อ docker-compose.yml มาใช้งาน
-
+ทำการรันเพื่อสร้าง docker
 
 ```sh
 mkdir -p ./dags ./config ./logs ./plugins ./tests ./cred
